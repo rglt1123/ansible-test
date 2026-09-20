@@ -1,0 +1,26 @@
+---
+- hosts: databases
+  become: true
+  tasks:
+
+  - name: update repository index   
+    tags: mysql,mariadb,ubuntu 
+    apt:
+      update_cache: yes
+
+  - name: install apache2 package
+    apt:
+      name: apache2
+      state: latest
+    when: ansible_distribution =="Ubuntu"
+
+
+- hosts: webservers
+  become: true
+  tasks:
+
+  - name: add php support
+    tags: apache2,http,https,ubuntu
+    apt:
+      name: libapache2-mod-php
+      state: latest

@@ -1,2 +1,5 @@
+[webservers]
 192.168.27.3
+
+[databases]
 192.168.27.4
