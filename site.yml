@@ -14,6 +14,24 @@
       state: latest
     when: ansible_distribution =="Ubuntu"
 
+- hosts: workstations
+  become: true
+  tasks:
+
+  - name: install unzip
+    package:
+      name: unzip
+    
+  - name: install terraform
+    unarchive:
+      src: https://releases.hashicorp.com/terraform/1.16.2/terraform_1.16.2_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
+
+
 
 - hosts: webservers
   become: true

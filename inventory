@@ -3,3 +3,6 @@
 
 [databases]
 192.168.27.4
+
+[workstations]
+192.168.27.5
