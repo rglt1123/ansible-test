@@ -1,88 +1,29 @@
 ---
-- hosts: databases
+- hosts: all
   become: true
-  tasks:
+  pre_tasks:
 
   - name: update repository index   
     tags: mysql,mariadb,ubuntu 
     apt:
       update_cache: yes
 
-  - name: install apache2 package
-    apt:
-      name: apache2
-      state: latest
-    when: ansible_distribution =="Ubuntu"
-
-- hosts: workstations
+- hosts: all
   become: true
-  tasks:
-
-  - name: install unzip
-    package:
-      name: unzip
-    
-  - name: install terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/1.16.2/terraform_1.16.2_linux_amd64.zip
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: root
-      group: root
-
-
+  roles:
+    - base
 
 - hosts: webservers
   become: true
-  tasks:
+  roles:
+    - webservers
 
-  - name: add php support
-    tags: apache2,http,https,ubuntu
-    apt:
-      name: libapache2-mod-php
-      state: latest
-
-  - name: copy site file
-    tags: apache2,http,ubuntu
-    copy:
-      src: default_site.html
-      dest: /var/www/html/index.html
-      owner: root
-      group: root
-      mode: 0644
-
-  - name: stop apache2
-    tags: apache
-    ansible.builtin.service:
-      name: apache2
-      state: started
-      enabled: yes
-
-- hosts: all
+- hosts: databases
   become: true
-  tasks:
+  roles:
+    - databases
 
-  - name: create user
-    tags: always
-    user: 
-      name: simone
-      groups: root
-
-  - name: add ssh key
-    tags: always
-    authorized_key:
-      user: simone
-      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINYNRoMz6aIpimlsTpjuwzT7UnL5HguiB5OufcvTkxqA ansible"
-
-  - name: add sudoers file for simone
-    tags: always
-    copy:
-      src: sudoer_simone
-      dest: /etc/sudoers.d/simone
-      owner: root
-      group: root
-      mode: 0440
-
-
-
+- hosts: workstations
+  become: true
+  roles:
+    - workstations
